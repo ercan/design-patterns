@@ -1,0 +1,44 @@
+#SINGLETON PATTERN#
+
+	Singleton pattern restricts the instantiation of a class and ensures that
+	only one instance of the class exists in JVM.
+
+	- Private Constructor to restrict instantiation of the class from other classes.
+	- Private static variable of the same class that is the only instance of the class.
+	- Public static method that returns the instance of the class, this is the global
+		access point for outer world to get instance of the singleton class.
+
+	_JAVA_
+
+		public class SingletonClass{
+
+			private static SingletonClass instance;
+
+			private SingletonClass(){}
+
+			// "synchronized" keyword ensures that only one thread can call 
+			// the getInstance method at the same time.
+			public static synchronized SingletonClass getInstance(){
+				if(instance == null)
+					instance = new SingletonClass();
+				return instance;
+			}
+		}
+
+	_KOTLIN_
+
+		// Singleton object can inherit another class.
+		object Singleton{
+    		init {
+        		println("Singleton class invoked.")
+    		}
+			// Variables and functions in this scope are "static" member of the Singleton object.
+			// Functions can take parameters and return objects.
+    		var variableName = "I am Var"
+    		fun printVarName(){
+        		println(variableName)
+    		}
+		}
+
+
+
