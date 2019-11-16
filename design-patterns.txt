@@ -1,4 +1,4 @@
-#SINGLETON PATTERN#
+# SINGLETON PATTERN #
 
 	Singleton pattern restricts the instantiation of a class and ensures that
 	only one instance of the class exists in JVM.
@@ -40,7 +40,7 @@
     		}
 		}
 
-#FACTORY PATTERN#
+# FACTORY PATTERN #
 
 	Factory pattern is used when we have a super class with multiple sub-classes
 	and based on input, we need to return one of the sub-class. We can apply Singleton
@@ -149,7 +149,7 @@
 			}
 		}
 
-#ABSTRACT FACTORY PATTERN#
+# ABSTRACT FACTORY PATTERN #
 
 	Abstract factory pattern is similar to Factory pattern but we get rid of if-else or when block
 	in abstract factory pattern and we have a factory class for each sub-class. It is called 
@@ -188,4 +188,71 @@
 			}
 		}
 
+# BUILDER PATTERN #
 
+	Builder pattern solves some of the problems with Factory and Abstract Factory
+	design patterns when creating the object contains a lot of attributes. Builder
+	pattern solves the issue with large number of optional parameters by providing
+	a way to build the object step-by-step and provide a method that will return the
+	final object.
+
+	_JAVA_
+
+		public class Computer{
+			// Required parameters.
+			private String HDD;
+			private String RAM;
+			// Optional parameters.
+			private boolean isGraphicCardEnabled;
+			private boolean isBluetoothEnabled;
+
+			// Getters of all members...
+
+			// Contructor is private to prevent object creating directly.
+			private Computer(ComputerBuilder builder){
+				this.HDD = builder.HDD;
+				this.RAM = builder.RAM;
+				this.isGraphicCardEnabled = builder.isGraphicCardEnabled;
+				this.isBluetoothEnabled = builder.isBluetoothEnabled;
+			}
+
+			// A Computer object can be created by using ComputerBuilder class and its functions.
+			public static class ComputerBuilder{
+				// Required parameters.
+				private String HDD;
+				private String RAM;
+				// Optional parameters.
+				private boolean isGraphicCardEnabled;
+				private boolean isBluetoothEnabled;
+
+				// Required parameters will be given by this contructor.
+				public ComputerBuilder(String HDD, String RAM){
+					this.HDD = HDD;
+					this.RAM = RAM;
+				}
+
+				// By "return this", client can call these setter methods consecutively.
+				public ComputerBuilder setGraphicCardEnabled(boolean isGraphicCardEnabled){
+					this.isGraphicCardEnabled = isGraphicCardEnabled;
+					return this;
+				}
+				public ComputerBuilder setBluetoothEnabled(boolean isBluetoothEnabled){
+					this.isBluetoothEnabled = isBluetoothEnabled;
+					return this;
+				}
+				// Finished the building process and returns the final Computer object.
+				public Computer build(){
+					return new Computer(this);
+				}
+			}
+		}
+
+		// In Main function.
+		Computer computer = ComputerBuilder("HDD", "RAM").
+								setBluetoothEnabled(true).
+								setGraphicCardEnabled(false).
+								build();
+
+	_KOTLIN_
+
+		In kotlin, you can use "apply" keyword or default "named" parameters.
