@@ -1,223 +1,209 @@
-# SINGLETON PATTERN #
-
-	Singleton pattern restricts the instantiation of a class and ensures that
-	only one instance of the class exists in JVM.
-
-	- Private Constructor to restrict instantiation of the class from other classes.
-	- Private static variable of the same class that is the only instance of the class.
-	- Public static method that returns the instance of the class, this is the global
-		access point for outer world to get instance of the singleton class.
-
-	_JAVA_
-
-		public class SingletonClass{
-
-			private static SingletonClass instance;
-
-			private SingletonClass(){}
-
-			// "synchronized" keyword ensures that only one thread can call 
-			// the getInstance method at the same time.
-			public static synchronized SingletonClass getInstance(){
-				if(instance == null)
-					instance = new SingletonClass();
-				return instance;
-			}
-		}
-
-	_KOTLIN_
-
-		// Singleton object can inherit another class.
-		object Singleton{
-    		init {
-        		println("Singleton class invoked.")
-    		}
-			// Variables and functions in this scope are "static" member of the Singleton object.
-			// Functions can take parameters and return objects.
-    		var variableName = "I am Var"
-    		fun printVarName(){
-        		println(variableName)
-    		}
-		}
-
-# FACTORY PATTERN #
-
-	Factory pattern is used when we have a super class with multiple sub-classes
-	and based on input, we need to return one of the sub-class. We can apply Singleton
-	pattern on Factory class or make the factory method static.
-
-	_JAVA_
-
-		public abstract class Computer {
+# CREATIONAL DESIGN PATTERNS #
 	
-			public abstract String getRAM();
-			public abstract String getHDD();
-			public abstract String getCPU();
+	Creational design patterns provide solution to instantiate an object in the best possible way for
+	specific situations.
+
+	# SINGLETON PATTERN #
+
+		Singleton pattern restricts the instantiation of a class and ensures that
+		only one instance of the class exists in JVM.
+
+		- Private Constructor to restrict instantiation of the class from other classes.
+		- Private static variable of the same class that is the only instance of the class.
+		- Public static method that returns the instance of the class, this is the global
+			access point for outer world to get instance of the singleton class.
+
+		_JAVA_
+
+			public class SingletonClass{
+
+				private static SingletonClass instance;
+
+				private SingletonClass(){}
+
+				// "synchronized" keyword ensures that only one thread can call 
+				// the getInstance method at the same time.
+				public static synchronized SingletonClass getInstance(){
+					if(instance == null)
+						instance = new SingletonClass();
+					return instance;
+				}
+			}
+
+		_KOTLIN_
+
+			// Singleton object can inherit another class.
+			object Singleton{
+				init {
+					println("Singleton class invoked.")
+				}
+				// Variables and functions in this scope are "static" member of the Singleton object.
+				// Functions can take parameters and return objects.
+				var variableName = "I am Var"
+				fun printVarName(){
+					println(variableName)
+				}
+			}
+
+	# FACTORY PATTERN #
+
+		Factory pattern is used when we have a super class with multiple sub-classes
+		and based on input, we need to return one of the sub-class. We can apply Singleton
+		pattern on Factory class or make the factory method static.
+
+		_JAVA_
+
+			public abstract class Computer {
+		
+				public abstract String getRAM();
+				public abstract String getHDD();
+				public abstract String getCPU();
+				
+				@Override
+				public String toString(){
+					return "RAM= "+this.getRAM()+", HDD="+this.getHDD()+", CPU="+this.getCPU();
+				}
+			}
+
+			public class PC extends Computer {
+
+				private String ram;
+				private String hdd;
+				private String cpu;
+		
+				public PC(String ram, String hdd, String cpu){
+					this.ram=ram;
+					this.hdd=hdd;
+					this.cpu=cpu;
+				}
+				// getters & setters
+			}
+
+			public class Server extends Computer {
 			
-			@Override
-			public String toString(){
-				return "RAM= "+this.getRAM()+", HDD="+this.getHDD()+", CPU="+this.getCPU();
-			}
-		}
-
-		public class PC extends Computer {
-
-			private String ram;
-			private String hdd;
-			private String cpu;
-	
-			public PC(String ram, String hdd, String cpu){
+				private String ram;
+				private String hdd;
+				private String cpu;
+		
+				public Server(String ram, String hdd, String cpu){
 				this.ram=ram;
 				this.hdd=hdd;
 				this.cpu=cpu;
+				}
+				// getters & setters
 			}
-			// getters & setters
-		}
 
-		public class Server extends Computer {
-		
-			private String ram;
-			private String hdd;
-			private String cpu;
-	
-			public Server(String ram, String hdd, String cpu){
-			this.ram=ram;
-			this.hdd=hdd;
-			this.cpu=cpu;
-			}
-			// getters & setters
-		}
+			// getComputer method is the factory method that returns a Computer according to parameters.
+			public class ComputerFactory {
 
-		// getComputer method is the factory method that returns a Computer according to parameters.
-		public class ComputerFactory {
-
-			public static Computer getComputer(String type, String ram, String hdd, String cpu){
-				if("PC".equalsIgnoreCase(type)) 
-					return new PC(ram, hdd, cpu);
-				else if("Server".equalsIgnoreCase(type)) 
-					return new Server(ram, hdd, cpu);
-				return null;
-			}
-		}
-
-	_KOTLIN_
-
-		abstract class Computer{
-			abstract fun getRAM(): String
-			abstract fun getHDD(): String
-			abstract fun getCPU(): String
-
-			override fun toString(): String{
-				return "RAM= "+this.getRAM()+", HDD="+this.getHDD()+", CPU="+this.getCPU()
-			}
-		}
-
-		public class PC (var ram: String, var hdd: String, var cpu: String) : Computer(){
-			override fun getRAM(): String{
-				return ram
-			}
-			override fun getHDD(): String{
-				return hdd
-			}
-			override fun getCPU(): String{
-				return this.cpu
-			}
-			// and setters...
-		}
-
-		public class Server (var ram: String, var hdd: String, var cpu: String) : Computer(){
-			override fun getRAM(): String{
-				return ram
-			}
-			override fun getHDD(): String{
-				return hdd
-			}
-			override fun getCPU(): String{
-				return this.cpu
-			}
-			// and setters...
-		}
-
-		public class ComputerFactory{
-			companion object{
-				public fun getComputer(type: String, ram: String, hdd: String, cpu: String): Computer? = 
-				when(type){
-					"PC" -> PC(ram, hdd, cpu)
-					"SERVER" -> Server(ram, hdd, cpu)
-					else -> null
+				public static Computer getComputer(String type, String ram, String hdd, String cpu){
+					if("PC".equalsIgnoreCase(type)) 
+						return new PC(ram, hdd, cpu);
+					else if("Server".equalsIgnoreCase(type)) 
+						return new Server(ram, hdd, cpu);
+					return null;
 				}
 			}
-		}
 
-# ABSTRACT FACTORY PATTERN #
+		_KOTLIN_
 
-	Abstract factory pattern is similar to Factory pattern but we get rid of if-else or when block
-	in abstract factory pattern and we have a factory class for each sub-class. It is called 
-	"the factory of factories".
+			abstract class Computer{
+				abstract fun getRAM(): String
+				abstract fun getHDD(): String
+				abstract fun getCPU(): String
 
-	_JAVA_
-		// For the same; PC, Server and Computer classes stay the same.
-		public interface ComputerAbstractFactory {
-			public Computer createComputer();
-		}
-		public class ComputerFactory {
-			public static Computer getComputer(ComputerAbstractFactory factory){
-				return factory.createComputer();
-			}
-		}
-		Computer myPC = ComputerFactory.getComputer(new PCFactory(".."..".."))
-		Computer myServer = ComputerFactory.getComputer(new ServerFactory(".."..".."))
-
-	_KOTLIN_
-
-		// For the same; PC, Server and Computer classes stay the same.
-		public interface ComputerAbstractFactory{
-    		abstract fun createComputer(): Computer
-		}
-		public class PCFactory (private var ram: String, private var hdd: String, private var cpu: String) : ComputerAbstractFactory{
-			override fun createComputer(): Computer = PC(ram, hdd, cpu)
-		}
-		public class ServerFactory (private var ram: String, private var hdd: String, private var cpu: String) : ComputerAbstractFactory{
-			override fun createComputer(): Computer = Server(ram, hdd, cpu)
-		}
-		public class ComputerFactory{
-			companion object{
-				public fun getComputer(computerAbstractFactory: ComputerAbstractFactory): Computer{
-					return computerAbstractFactory.createComputer()
+				override fun toString(): String{
+					return "RAM= "+this.getRAM()+", HDD="+this.getHDD()+", CPU="+this.getCPU()
 				}
 			}
-		}
 
-# BUILDER PATTERN #
-
-	Builder pattern solves some of the problems with Factory and Abstract Factory
-	design patterns when creating the object contains a lot of attributes. Builder
-	pattern solves the issue with large number of optional parameters by providing
-	a way to build the object step-by-step and provide a method that will return the
-	final object.
-
-	_JAVA_
-
-		public class Computer{
-			// Required parameters.
-			private String HDD;
-			private String RAM;
-			// Optional parameters.
-			private boolean isGraphicCardEnabled;
-			private boolean isBluetoothEnabled;
-
-			// Getters of all members...
-
-			// Contructor is private to prevent object creating directly.
-			private Computer(ComputerBuilder builder){
-				this.HDD = builder.HDD;
-				this.RAM = builder.RAM;
-				this.isGraphicCardEnabled = builder.isGraphicCardEnabled;
-				this.isBluetoothEnabled = builder.isBluetoothEnabled;
+			public class PC (var ram: String, var hdd: String, var cpu: String) : Computer(){
+				override fun getRAM(): String{
+					return ram
+				}
+				override fun getHDD(): String{
+					return hdd
+				}
+				override fun getCPU(): String{
+					return this.cpu
+				}
+				// and setters...
 			}
 
-			// A Computer object can be created by using ComputerBuilder class and its functions.
-			public static class ComputerBuilder{
+			public class Server (var ram: String, var hdd: String, var cpu: String) : Computer(){
+				override fun getRAM(): String{
+					return ram
+				}
+				override fun getHDD(): String{
+					return hdd
+				}
+				override fun getCPU(): String{
+					return this.cpu
+				}
+				// and setters...
+			}
+
+			public class ComputerFactory{
+				companion object{
+					public fun getComputer(type: String, ram: String, hdd: String, cpu: String): Computer? = 
+						when(type){
+							"PC" -> PC(ram, hdd, cpu)
+							"SERVER" -> Server(ram, hdd, cpu)
+							else -> null
+						}
+				}
+			}
+
+	# ABSTRACT FACTORY PATTERN #
+
+		Abstract factory pattern is similar to Factory pattern but we get rid of if-else or when block
+		in abstract factory pattern and we have a factory class for each sub-class. It is called 
+		"the factory of factories".
+
+		_JAVA_
+			// For the same; PC, Server and Computer classes stay the same.
+			public interface ComputerAbstractFactory {
+				public Computer createComputer();
+			}
+			public class ComputerFactory {
+				public static Computer getComputer(ComputerAbstractFactory factory){
+					return factory.createComputer();
+				}
+			}
+			Computer myPC = ComputerFactory.getComputer(new PCFactory(".."..".."))
+			Computer myServer = ComputerFactory.getComputer(new ServerFactory(".."..".."))
+
+		_KOTLIN_
+
+			// For the same; PC, Server and Computer classes stay the same.
+			public interface ComputerAbstractFactory{
+				abstract fun createComputer(): Computer
+			}
+			public class PCFactory (private var ram: String, private var hdd: String, private var cpu: String) : ComputerAbstractFactory{
+				override fun createComputer(): Computer = PC(ram, hdd, cpu)
+			}
+			public class ServerFactory (private var ram: String, private var hdd: String, private var cpu: String) : ComputerAbstractFactory{
+				override fun createComputer(): Computer = Server(ram, hdd, cpu)
+			}
+			public class ComputerFactory{
+				companion object{
+					public fun getComputer(computerAbstractFactory: ComputerAbstractFactory): Computer{
+						return computerAbstractFactory.createComputer()
+					}
+				}
+			}
+
+	# BUILDER PATTERN #
+
+		Builder pattern solves some of the problems with Factory and Abstract Factory
+		design patterns when creating the object contains a lot of attributes. Builder
+		pattern solves the issue with large number of optional parameters by providing
+		a way to build the object step-by-step and provide a method that will return the
+		final object.
+
+		_JAVA_
+
+			public class Computer{
 				// Required parameters.
 				private String HDD;
 				private String RAM;
@@ -225,34 +211,176 @@
 				private boolean isGraphicCardEnabled;
 				private boolean isBluetoothEnabled;
 
-				// Required parameters will be given by this contructor.
-				public ComputerBuilder(String HDD, String RAM){
-					this.HDD = HDD;
-					this.RAM = RAM;
+				// Getters of all members...
+
+				// Contructor is private to prevent object creating directly.
+				private Computer(ComputerBuilder builder){
+					this.HDD = builder.HDD;
+					this.RAM = builder.RAM;
+					this.isGraphicCardEnabled = builder.isGraphicCardEnabled;
+					this.isBluetoothEnabled = builder.isBluetoothEnabled;
 				}
 
-				// By "return this", client can call these setter methods consecutively.
-				public ComputerBuilder setGraphicCardEnabled(boolean isGraphicCardEnabled){
-					this.isGraphicCardEnabled = isGraphicCardEnabled;
-					return this;
-				}
-				public ComputerBuilder setBluetoothEnabled(boolean isBluetoothEnabled){
-					this.isBluetoothEnabled = isBluetoothEnabled;
-					return this;
-				}
-				// Finished the building process and returns the final Computer object.
-				public Computer build(){
-					return new Computer(this);
+				// A Computer object can be created by using ComputerBuilder class and its functions.
+				public static class ComputerBuilder{
+					// Required parameters.
+					private String HDD;
+					private String RAM;
+					// Optional parameters.
+					private boolean isGraphicCardEnabled;
+					private boolean isBluetoothEnabled;
+
+					// Required parameters will be given by this contructor.
+					public ComputerBuilder(String HDD, String RAM){
+						this.HDD = HDD;
+						this.RAM = RAM;
+					}
+
+					// By "return this", client can call these setter methods consecutively.
+					public ComputerBuilder setGraphicCardEnabled(boolean isGraphicCardEnabled){
+						this.isGraphicCardEnabled = isGraphicCardEnabled;
+						return this;
+					}
+					public ComputerBuilder setBluetoothEnabled(boolean isBluetoothEnabled){
+						this.isBluetoothEnabled = isBluetoothEnabled;
+						return this;
+					}
+					// Finished the building process and returns the final Computer object.
+					public Computer build(){
+						return new Computer(this);
+					}
 				}
 			}
-		}
 
-		// In Main function.
-		Computer computer = ComputerBuilder("HDD", "RAM").
-								setBluetoothEnabled(true).
-								setGraphicCardEnabled(false).
-								build();
+			// In Main function.
+			Computer computer = ComputerBuilder("HDD", "RAM").
+									setBluetoothEnabled(true).
+									setGraphicCardEnabled(false).
+									build();
 
-	_KOTLIN_
+		_KOTLIN_
 
-		In kotlin, you can use "apply" keyword or default "named" parameters.
+			In kotlin, you can use "apply" keyword or default "named" parameters.
+
+	# PROTOTYPE PATTERN #
+
+		Prototype pattern is used when the object creation requires a lot of time and resources and you
+		have similar object already existing. So this pattern provides a mechanism to copy the original
+		object to a new object and modify it according to our needs.
+
+# STRUCTURAL DESIGN PATTERNS #
+
+	Structural design patterns provide different ways to organize class structure. This "class structure" 
+	may refer one or more classes.
+
+	# ADAPTER PATTERN #
+
+		Adapter pattern is used so that two unrelated interfaces can work together. The object that joins
+		these unrelated interfaces is called an "Adapter". 
+
+		_JAVA_
+
+			// MPH to KMPH adapter.
+
+			public interface Movable{
+				double getSpeed();
+			}
+			public class BugattiVeyron implements Movable{
+				@Override
+				public double getSpeed(){
+					// 268 MPH.
+					return 268;
+				}
+			}
+			public interface MovableAdapter{
+				double getSpeed();
+			}
+			public class MovableAdapterImpl implements MovableAdapter{
+				private Movable luxuryCar;
+				
+				MovableAdapterImpl(Movable luxuryCar){
+					this.luxuryCar = luxuryCar;
+				}
+
+				@Override
+				public double getSpeed(){
+					return convertMPHtoKMPH(luxuryCar.getSpeed());
+				}
+
+				private convertMPHtoKMPH(double mph){
+					return mph * 1.609.35
+				}
+			}
+
+			// In test.
+			Movable bugattiVeyron = new BugattiVeyron();
+			MovableAdapter bugattiVeyronAdapter = new MovableAdapterImpl(bugattiVeyron);
+			// This prints 431.30312 as KMPH.
+			System.out.println(bugattiVeyronAdapter.getSpeed());
+
+	# COMPOSITE PATTERN #
+
+		Composite design pattern is used when we have to represent a part-whole hierarchy or when we need to
+		create a structure in a way that the objects in the structure have to be treated the same way. Composite
+		pattern consists of 3 objects.
+
+		1) BASE COMPONENT	:	is the interface for all objects in the composition, client program uses base
+								component to work with the all objets in the composition. This defines common
+								methods for leafs and composites.
+
+		2) LEAF				:	defines the behaviour for the elements in the composition. It is the building
+								block for the composition and implements base component. It does not have
+								references to other components.
+
+		3) COMPOSITE		:	consists of leaf elements and implements the operations in base component.
+
+		_JAVA_
+
+			// This is the "Base Component" of the composition.
+			public interface Shape {
+				public void draw(String fillColor);
+			}
+
+			// The "Triangle" and "Circle" classes are the "Leafs" in the composition. 
+			public class Triangle implements Shape{
+				@Override
+				public void draw(String fillColor){
+					System.out.println("Drawing Triangle with color "+fillColor);
+				}
+			}
+			public class Circle implements Shape {
+				@Override
+				public void draw(String fillColor) {
+					System.out.println("Drawing Circle with color "+fillColor);
+				}
+			}
+
+			// This "Drawin" class is a "Composite" in the composition which contains leafs and operate on them.
+			public class Drawing implements Shape{
+
+				//collection of Shapes
+				private List<Shape> shapes = new ArrayList<Shape>();
+				
+				@Override
+				public void draw(String fillColor) {
+					for(Shape sh : shapes){
+						sh.draw(fillColor);
+					}
+				}
+				
+				//adding shape to drawing
+				public void add(Shape s){
+					this.shapes.add(s);
+				}
+				
+				//removing shape from drawing
+				public void remove(Shape s){
+					shapes.remove(s);
+				}
+				
+				//removing all the shapes
+				public void clear(){
+					System.out.println("Clearing all the shapes from drawing");
+					this.shapes.clear();
+				}
+			}
