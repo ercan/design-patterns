@@ -384,3 +384,134 @@
 					this.shapes.clear();
 				}
 			}
+
+	# PROXY PATTERN #
+
+		Proxy pattern is used when we want to provide controlled access of a functionality. This provides a
+		surrogate for another object to control access to it.
+
+		_JAVA_
+
+			public interface CommandExecutor{
+				public void runCommand(String cmd) throws Exception;
+			}
+
+			public class CommandExecutorImpl implements CommandExecutor{
+				@Override
+				public void runCommand(String cmd) throws IOException{
+					Runtime.getRuntime().exec(cmd);
+				}
+			}
+
+			// Now we want to provide only admin users to have full access of above class. If the user is not
+			// admin then only limited commands will be allowed. For example below, we are restricting the use
+			// of "rm" command by using a proxy class.
+			public class CommandExecutorProxy implements CommandExecutor{
+				private boolean isAdmin;
+				private CommandExecutor executor;
+
+				public CommandExecutorProxy(String userName, String password){
+					// Check if the user is an admin or not by using IF block(s).
+				}
+				@Override
+				public void runCommand(String cmd) throws IOException{
+					if(isAdmin){
+						executor.runCommand(cmd);
+					}
+					else{
+						if(cmd.trim().startsWith("rm"))
+							throw new Exception("run command is not allowed for non-admin users");
+						else
+							executor.runCommand(cmd);
+					}
+				}
+			}
+
+			// In main function
+			// "ls" command will work but "rm -rf" command will not.
+			CommandExecutor executor = new CommandExecutorProxy("Ercan", "myPassword");
+			try{
+				executor.runCommand("ls -all");
+				executor.runCommand("rm -rf *");
+			}
+			catch(Exception e){
+				System.out.println("EXCEPTION MESSAGE: " + e.getMessage());
+			}
+
+	# FLYWEIGHT PATTERN #
+
+		Flyweight design pattern is used when we need to create a lot of objects of a class. To consume the 
+		system resources efficiently, we can use flyweight design pattern by sharing objects. Before applying
+		flyweight pattern, we need to consider some factors:
+
+		1)	The number of the objects to be created should be huge.
+		2)	The object creation should be time consuming and heavy on memory.
+		3)	The object properties should be divided into intrinsic and extrinsic properties. Extrinsic properties
+			is defined by the client program.
+
+		Intrinsic properties make the object unique whereas extrinsic properties are set by the client code and
+		used to perform different operations. For example, a circle object can have extrinsic properties such as
+		color and width.
+
+		_JAVA_
+
+			public interface Shape{
+				public draw(Graphics g, int x, int y, int width, int height, Color color);
+			}
+			public class Lines implements Shape{
+				public Line(){
+					// Creating line object.
+				}
+				@Override
+				public void draw(Graphics line, int x1, int y1, int x2, int y2, Color color){
+					line.setColor(color);
+					line.drawLine(x1, y1, x2, y2);
+				}
+			}
+			public class Oval implements Shape{
+
+				// Instrinsic propert.
+				private boolean fill;
+
+				public Oval(boolean f){
+					this.fill = f;
+					// Creating oval object.
+				}
+				@Override
+				public void draw(Graphics circle, int x, int y, int width, int height, Color color){
+					circle.setColor(color);
+					circle.drawOval(x, y, width, height);
+					if(fill)
+						circle.fillOval(x, y, width, height);
+				}
+			}
+
+			// Whenever client program makes a call to get an instance of Object, it should be returned from 
+			// the HashMap, if not found then create a new Object and put in the Map and then return it. 
+			// We need to make sure that all the intrinsic properties are considered while creating the Object.
+
+			// Flyweight Factory Class.
+			public class ShapeFactory{
+				private static final HashMap<ShapeType, Shape> shapes = new HashMap<ShapeType, Shape>();
+
+				public static Shape getShape(ShapeType type){
+					Shape shapeImpl = shapes.get(type);
+					if (shapeImpl == null){
+						if (type.equals(ShapeType.OVAL_FILL))
+							shapeImpl = new Oval(true);
+						else if (type.equals(ShapeType.OVAL_NOFILL))
+							shapeImp = new Oval(false);
+						else if (type.equals(ShapeType.LINE))
+							shapeImp = new Line();
+
+						shapes.put(type, shapeImpl);
+					}
+					return shapeImpl;
+				}
+
+				public static enum ShapeType{
+					OVAL_FILL, 
+					OVAL_NOFILL, 
+					LINE;
+				}
+			}
