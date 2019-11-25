@@ -515,3 +515,153 @@
 					LINE;
 				}
 			}
+
+	# FACADE PATTERN #
+
+		Facade pattern is used to help clients to easily interacy with the system. Suppose we have an 
+		application with a set of interfaces to use MySql/Oracle database and to generate different types
+		of reports, such as html or pdf report etc. So we will have a different set of interfaces to work
+		with different types of database. Now a client application can use these interfaces to get the required
+		database connection and generate reports. But if the complexity increases then the client application
+		will find it difficult to manage it. So we can apply Facade pattern here and provide a wrapper interface
+		on top of the existing interface. According to GoF, facade pattern defines a higher-level interface
+		that makes the subsystem easier to use. Facade design pattern can be applied at any point of development, 
+		usually when the number of interfaces grow and system gets complex. Subsystem interfaces are not aware of 
+		Facade and they shouldn’t have any reference of the Facade interface.
+
+		_JAVA_
+
+			public class MySqlHelper{
+				public static Connection getMySqlDBConnection(){
+					//...
+					return null;
+				}
+				public void generateMySqlPDFReport(String tableName, Connection con){
+					//...
+				}
+				public void generateMySqlHTMLReport(String tableName, Connection con){
+					//...
+				}
+			}
+			public class OracleHelper{
+				public static Connection getOracleDBConnection(){
+					//...
+					return null;
+				}
+				public void generateOraclePDFReport(String tableName, Connection con){
+					//...
+				}
+				public void generateOracleHTMLReport(String tableName, Connection con){
+					//...
+				}
+			}
+
+			// Now this is facade pattern interface.
+			public class DBHelperFacade{
+				public static void generateReport(DBTypes dbType, ReportTypes reportType, String table){
+					// By checking enum values, the appropriate report can be generated.
+				}
+
+				public static enum DBTypes{
+					MYSQL,
+					ORACLE;
+				}
+				public static enum ReportTypes{
+					HTML,
+					PDF;
+				}
+			}
+
+	# BRIDGE PATTERN #
+
+		The Bridge design pattern allows you to separate the abstraction from the implementation.It is 
+		a structural design pattern. There are 2 parts in Bridge design pattern:
+
+		1) Abstraction
+		2) Implementation
+
+		_JAVA_
+
+			// abstraction in bridge pattern 
+			abstract class Vehicle { 
+				protected Workshop workShop1; 
+				protected Workshop workShop2; 
+
+				protected Vehicle(Workshop workShop1, Workshop workShop2) 
+				{ 
+					this.workShop1 = workShop1; 
+					this.workShop2 = workShop2; 
+				} 
+
+				abstract public void manufacture(); 
+			} 
+
+			// Refine abstraction 1 in bridge pattern 
+			class Car extends Vehicle { 
+				public Car(Workshop workShop1, Workshop workShop2) 
+				{ 
+					super(workShop1, workShop2); 
+				} 
+
+				@Override
+				public void manufacture() 
+				{ 
+					System.out.print("Car "); 
+					workShop1.work(); 
+					workShop2.work(); 
+				} 
+			} 
+
+			// Refine abstraction 2 in bridge pattern 
+			class Bike extends Vehicle { 
+				public Bike(Workshop workShop1, Workshop workShop2) 
+				{ 
+					super(workShop1, workShop2); 
+				} 
+
+				@Override
+				public void manufacture() 
+				{ 
+					System.out.print("Bike "); 
+					workShop1.work(); 
+					workShop2.work(); 
+				} 
+			} 
+
+			// Implementor for bridge pattern 
+			interface Workshop 
+			{ 
+				abstract public void work(); 
+			} 
+
+			// Concrete implementation 1 for bridge pattern 
+			class Produce implements Workshop { 
+				@Override
+				public void work() 
+				{ 
+					System.out.print("Produced"); 
+				} 
+			} 
+
+			// Concrete implementation 2 for bridge pattern 
+			class Assemble implements Workshop { 
+				@Override
+				public void work() 
+				{ 
+					System.out.print(" And"); 
+					System.out.println(" Assembled."); 
+				} 
+			} 
+
+			// Demonstration of bridge design pattern 
+			class BridgePattern { 
+				public static void main(String[] args) 
+				{ 
+					Vehicle vehicle1 = new Car(new Produce(), new Assemble()); 
+					vehicle1.manufacture(); 
+					Vehicle vehicle2 = new Bike(new Produce(), new Assemble()); 
+					vehicle2.manufacture(); 
+				} 
+			} 
+
+	
