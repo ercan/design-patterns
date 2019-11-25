@@ -664,4 +664,71 @@
 				} 
 			} 
 
-	
+	# DECORATOR PATTERN #
+
+		The decorator design pattern is used to modify the functionality of an object at runtime. At the same
+		time, other instances of the same class wil not be affected by this. Lets say that we have a "Car"
+		interface, "BasicCar" class which implements "Car", "SportsCar" and "LuxuryCar" classes which extends 
+		"BasicCar" class. But what if we want to get a car at runtime that has both the features of sports car
+		and luxury car? Then the implementation would get complext by using inheritance and composition. Therefor
+		we need decorator design pattern.
+
+		_JAVA_
+
+			// Component interface.
+			public interface Car{
+				public void assembe();
+			}
+			// Component implementation.
+			public class BasicCar implements Car{
+				@Override
+				public void assemble(){
+					//...
+				}
+			}
+			// Decorator class implements the component interface and it has a HAS-A relationship with the
+			// component interface.
+			public class CarDecorator implements Car{
+				protected Car car;
+
+				public CarDecorator(Car c){
+					this.car = c;
+				}
+
+				@Override
+				public void assemble(){
+					this.car.assemble();
+				}
+			}
+			// Concrete Decorators extending the base decorator functionality and modifying the component
+			// behaviour accordingly.
+			public class SportsCar extends CarDecorator{
+				public SportsCar(Car c){
+					super(c);
+				}
+
+				@Override
+				public void assemble(){
+					super.assemble();
+					//...
+				}
+			}
+			public class LuxuryCar extends CarDecorator{
+				public LuxuryCar(Car c){
+					super(c);
+				}
+
+				@Override
+				public void assemble(){
+					super.assemble();
+					//...
+				}
+			}
+
+			// main function
+
+			Car sportsCar = new SportsCar(new BasicCar());
+			sportsCar.assemble();
+
+			Car sportsLuxuryCar = new SportsCar(new LuxuryCar(new BasicCar()));
+			sportsLuxuryCar.assemble();
