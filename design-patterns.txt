@@ -993,3 +993,133 @@
 					}
 				}
 			}
+	
+	# OBSERVER PATTERN #
+
+		Observer design pattern is useful when you are interested in the state of an object and want to get
+		notified whenever there is any change. In observer pattern, the object that watch on the state of
+		another object is called "Observer" and the object that is being watched is called "Subject".
+
+		Subject contains a list of observers to notify of any change in its state, so it should provide methods
+		which observers can register and unregister themselves. Subject also contain a method to notify all the
+		observers of any change and either it can send the update while notifying the observer or it can provide
+		another method to get the update.
+
+		_JAVA_
+
+			public interface Subject{
+				// Methods to register and unregister observers.
+				public void register(Observer observer);
+				public void unregister(Observer observer);
+
+				// Method to notify observers of change.
+				public void notifyObservers();
+
+				// Method to get updates from subject.
+				public Object getUpdate(Observer observer);
+			}
+
+			public interface Observer{
+				// Method to update the observer, used by subject.
+				public void update();
+
+				// Attach with subject to observe.
+				public void setSubject(Subject subject);
+			}
+
+			public class MyTopic implements Subject{
+				private List<Observer> observers;
+				private String message;
+				private boolean changed;
+				private final Object MUTEXT = new Object();
+
+				public MyTopic(){
+					this.observers = new ArrayList<>();
+				}
+
+				@Override
+				public void register(Observer observer){
+					if(observer = null)
+						throw new NullPointerException("Null Observer");
+					synchronized(MUTEXT){
+						if(!observers.contains(observer))
+							observers.add(observer);
+					}
+				}
+
+				@Override 
+				public void unregister(Observer observer){
+					synchronized(MUTEXT){
+						observers.remove(observer);
+					}
+				}
+
+				@Override
+				public void notifyObservers(){
+					List<Observer> observersLocal = null;
+					//synchronization is used to make sure any observer registered after message is received is not notified
+					synchronized (MUTEX) {
+						if (!changed)
+							return;
+						observersLocal = new ArrayList<>(this.observers);
+						this.changed=false;
+					}
+					for (Observer observer : observersLocal) {
+						observer.update();
+					}
+				}
+
+				@Override
+				public Object getUpdate(Observer observer){
+					return this.message;
+				}
+
+				// Method to post message to the topic.
+				public void postMessage(String msg){
+					this.message = msg;
+					this.changed = true;
+					notifyObservers();
+				}
+			}
+
+			public class MyTopicSubscriber implements Observer{
+				private String name;
+				private Subject topic;
+
+				public MyTopicSubscriber(String name){
+					this.name = name;
+				}
+
+				@Override
+				public void update(){
+					String msg = (String) topic.getUpdate(this);
+					if(msg = null){
+						System.out.println("No Message.");
+					}
+					else{
+						System.out.println(msg);
+					}
+				}
+
+				@Override
+				public void setSubjet(Subject subject){
+					this.topic = subject;
+				}
+			}
+
+			// In main function.
+			MyTopic topic = new MyTopic();
+
+			Observer observer1 = new MyTopic("observer1");
+			Observer observer2 = new MyTopic("observer2");
+			Observer observer3 = new MyTopic("observer3");
+
+			topic.register(observer1);
+			topic.register(observer2);
+			topic.register(observer3);
+
+			observer1.setSubject(topic);
+			observer2.setSubject(topic);
+			observer3.setSubject(topic);
+
+			topic.postMessage("New Message");
