@@ -1214,3 +1214,50 @@
 			// Pay by paypal or credit card.
 			cart.pay(new PaymentStrategy("@mail.com", "mypwd"));
 			cart.pay(new CreditCardStrategy("Pankaj Kumar", "1234567890123456", "786", "12/15"));
+
+	# STATE PATTERN #
+
+		State pattern is used when an object changes its behaviour based on its state. State pattern "Context"
+		is the class that has a State reference to one of the concrete implementations of the "State". Context
+		forwards the request to the state object for processing. Let's understand this with a simple exmaple.
+
+		_JAVA_
+
+			public interface State{
+				public void doAction();
+			}
+			public class TVStartState implements State{
+				@Override
+				public void doAction(){
+					// TV is turned on.
+				}
+			}
+			public class TVStopState implements State{
+				@Override
+				public void doAction(){
+					// TV is turned off.
+				}
+			}
+			public class TVContext implements State{
+				private State tvState;
+
+				public void setState(State state){
+					this.tvState = state;
+				}
+				public State getState(){
+					return this.tvState;
+				}
+				@Override
+				public void doAction(){
+					this.tvState.doAction();
+				}
+			}
+
+			// In main function.
+			TVContext myTvContext = new TVContext();
+			State tvStartState = new TVStartState()
+			State tvStopState = new tvStopState();
+			context.setState(tvStartState);
+			context.doAction();
+			context.setState(tvStopState);
+			context.doAction();
